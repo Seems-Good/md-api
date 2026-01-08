@@ -6,24 +6,56 @@
 <title>SG Markdown Editor for R2 Storage</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
 <style>
+:root {
+  --bg-gradient-start: #667eea;
+  --bg-gradient-end: #764ba2;
+  --container-bg: ghostwhite;
+  --text-primary: #333;
+  --text-secondary: #555;
+  --text-tertiary: #666;
+  --text-muted: #999;
+  --border-color: #e0e0e0;
+  --sidebar-bg: #f8f9fa;
+  --input-bg: white;
+  --input-border: #e0e0e0;
+  --editor-border: #e0e0e0;
+}
+
+:root.dark-mode {
+  --bg-gradient-start: #1e1e1e;
+  --bg-gradient-end: #2d2d2d;
+  --container-bg: #2d2d2d;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --text-tertiary: #90a0a0;
+  --text-muted: #707070;
+  --border-color: #404040;
+  --sidebar-bg: #252525;
+  --input-bg: #1e1e1e;
+  --input-border: #404040;
+  --editor-border: #404040;
+}
+
 * { margin: 0; box-sizing: border-box; }
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 20px;
+    transition: background 0.3s ease;
 }
 
 .container {
     width: 95%;
     padding: 10px;
-    background: ghostwhite;
+    background: var(--container-bg);
     border-radius: 12px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     overflow: hidden;
+    transition: background 0.3s ease;
 }
 /* Header */
 .header {
@@ -50,23 +82,50 @@ body {
 
 .logout-btn:hover { background: rgba(255,255,255,0.3); }
 
+.dark-mode-toggle {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s;
+    line-height: 1;
+}
+
+.dark-mode-toggle:hover { background: rgba(255,255,255,0.3); }
+
+/* Smooth transitions */
+.login-container, .container {
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.login-container.show, .container.show {
+    opacity: 1;
+}
+
 /* Login */
 .login-container {
     max-width: 400px;
     width: 100%;
-    background: white;
+    background: var(--input-bg);
     border-radius: 12px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     padding: 40px;
+    transition: background 0.3s ease;
 }
 
-.login-container h1 { text-align: center; margin-bottom: 30px; color: #333; }
+.login-container h1 { text-align: center; margin-bottom: 30px; color: var(--text-primary); }
 
 .form-group { margin-bottom: 20px; }
-.form-group label { display: block; margin-bottom: 8px; color: #555; font-weight: 500; }
+.form-group label { display: block; margin-bottom: 8px; color: var(--text-secondary); font-weight: 500; }
 .form-group input {
-    width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 14px;
+    width: 100%; padding: 12px; border: 2px solid var(--input-border); border-radius: 6px; font-size: 14px;
     transition: border-color 0.2s;
+    background: var(--input-bg);
+    color: var(--text-primary);
 }
 .form-group input:focus { outline: none; border-color: #667eea; }
 
@@ -85,8 +144,8 @@ body {
 
 /* Main content */
 .main-content { display: grid; grid-template-columns: 300px 1fr; height: calc(100vh - 100px); max-height: 800px; }
-.sidebar { background: #f8f9fa; border-right: 1px solid #e0e0e0; overflow-y: auto; }
-.sidebar-header { padding: 20px; border-bottom: 1px solid #e0e0e0; }
+.sidebar { background: var(--sidebar-bg); border-right: 1px solid var(--border-color); overflow-y: auto; transition: background 0.3s ease; }
+.sidebar-header { padding: 20px; border-bottom: 1px solid var(--border-color); }
 .new-file-btn {
     width: 100%; padding: 10px; background: #667eea; color: white;
     border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500;
@@ -96,13 +155,13 @@ body {
 
 .file-list { list-style: none; }
 .file-item {
-    padding: 12px 20px; border-bottom: 1px solid #e0e0e0;
+    padding: 12px 20px; border-bottom: 1px solid var(--border-color);
     cursor: pointer; transition: background 0.2s;
     display: flex; justify-content: space-between; align-items: center;
 }
-.file-item:hover { background: #e8eaf6; }
-.file-item.active { background: #e8eaf6; border-left: 3px solid #667eea; }
-.file-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
+.file-item:hover { background: rgba(102, 126, 234, 0.1); }
+.file-item.active { background: rgba(102, 126, 234, 0.15); border-left: 3px solid #667eea; }
+.file-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; color: var(--text-primary); }
 .delete-btn {
     background: #ff5252; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer;
     font-size: 12px; opacity: 0; transition: opacity 0.2s;
@@ -112,22 +171,110 @@ body {
 /* Editor */
 .editor-container { padding: 20px; overflow-y: auto; }
 .editor-header { display: flex; gap: 10px; margin-bottom: 20px; align-items: center; }
-.editor-header input { flex: 1; padding: 10px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 16px; }
+.editor-header input { 
+    flex: 1; padding: 10px; border: 2px solid var(--input-border); border-radius: 6px; font-size: 16px;
+    background: var(--input-bg);
+    color: var(--text-primary);
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
 .save-btn {
     padding: 10px 20px; background: #4caf50; color: white; border: none; border-radius: 6px; cursor: pointer;
     font-size: 14px; font-weight: 500; transition: background 0.2s;
 }
 .save-btn:hover { background: #45a049; }
-.editor-wrapper { border: 2px solid #e0e0e0; border-radius: 6px; overflow: hidden; }
+.editor-wrapper { border: 2px solid var(--editor-border); border-radius: 6px; overflow: hidden; transition: border-color 0.3s ease; }
 .CodeMirror { height: 500px; font-size: 14px; }
-.editor-preview-side, .editor-preview { padding: 10px !important; box-sizing: border-box !important; }
-.editor-preview-side { border-left: 1px solid #e0e0e0 !important; }
+.dark-mode .CodeMirror {
+  background: var(--input-bg);
+  color: var(--text-primary);
+}
+.dark-mode .CodeMirror-gutters {
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border-color);
+}
+.dark-mode .CodeMirror-cursor {
+  border-left-color: var(--text-primary);
+}
+.dark-mode .CodeMirror-selected {
+  background: rgba(102, 126, 234, 0.2);
+}
+.dark-mode .CodeMirror-line::selection,
+.dark-mode .CodeMirror-line > span::selection,
+.dark-mode .CodeMirror-line > span > span::selection {
+  background: rgba(102, 126, 234, 0.2);
+}
 
-.empty-state { text-align: center; padding: 60px 20px; color: #999; }
-.empty-state h2 { margin-bottom: 10px; color: #666; }
+/* EasyMDE toolbar dark mode */
+.dark-mode .editor-toolbar {
+  background: var(--sidebar-bg);
+  border-top: 1px solid var(--border-color);
+  border-left: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+}
+.dark-mode .editor-toolbar a {
+  color: #b0b0b0 !important;
+}
+.dark-mode .editor-toolbar a:hover,
+.dark-mode .editor-toolbar a.active {
+  background: #3a3a3a;
+  border-color: var(--border-color);
+  color: #e0e0e0 !important;
+}
+.dark-mode .editor-toolbar i.separator {
+  border-left: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+}
+
+/* EasyMDE preview dark mode */
+.dark-mode .editor-preview,
+.dark-mode .editor-preview-side {
+  background: var(--input-bg) !important;
+  color: var(--text-primary) !important;
+}
+.dark-mode .editor-preview h1,
+.dark-mode .editor-preview h2,
+.dark-mode .editor-preview h3,
+.dark-mode .editor-preview h4,
+.dark-mode .editor-preview h5,
+.dark-mode .editor-preview h6,
+.dark-mode .editor-preview-side h1,
+.dark-mode .editor-preview-side h2,
+.dark-mode .editor-preview-side h3,
+.dark-mode .editor-preview-side h4,
+.dark-mode .editor-preview-side h5,
+.dark-mode .editor-preview-side h6 {
+  color: var(--text-primary) !important;
+}
+.dark-mode .editor-preview pre,
+.dark-mode .editor-preview-side pre {
+  background: var(--sidebar-bg) !important;
+  color: var(--text-primary) !important;
+}
+.dark-mode .editor-preview code,
+.dark-mode .editor-preview-side code {
+  background: var(--sidebar-bg) !important;
+  color: var(--text-primary) !important;
+}
+.dark-mode .editor-preview blockquote,
+.dark-mode .editor-preview-side blockquote {
+  color: var(--text-secondary) !important;
+  border-left-color: var(--border-color) !important;
+}
+.dark-mode .editor-preview table th,
+.dark-mode .editor-preview table td,
+.dark-mode .editor-preview-side table th,
+.dark-mode .editor-preview-side table td {
+  border-color: var(--border-color) !important;
+}
+
+.editor-preview-side, .editor-preview { padding: 10px !important; box-sizing: border-box !important; }
+.editor-preview-side { border-left: 1px solid var(--border-color) !important; }
+
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+.empty-state h2 { margin-bottom: 10px; color: var(--text-tertiary); }
 
 .hidden { display: none; }
-.loading { text-align: center; padding: 20px; color: #666; }
+.loading { text-align: center; padding: 20px; color: var(--text-tertiary); }
 
 </style>
 </head>
@@ -158,6 +305,7 @@ body {
         <h1>📝SG Markdown Editor</h1>
         <div style="display: flex; align-items: center; gap: 15px;">
             <span id="userDisplay" style="color: rgba(255,255,255,0.9); font-size: 14px;"></span>
+            <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">🌙</button>
             <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
     </div>
@@ -193,10 +341,39 @@ body {
 
 <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
 <script>
+// VERSION 2.1 - Session persistence fix
+console.log('=== SCRIPT LOADED - VERSION 2.1 ===');
 let currentFile = null;
 let editor = null;
 const API_BASE = '/api';
 let firstClickHintShown = false;
+
+// Dark mode functionality
+function toggleDarkMode() {
+  const root = document.documentElement;
+  const isDark = root.classList.toggle('dark-mode');
+  const toggleBtn = document.querySelector('.dark-mode-toggle');
+  
+  // Update button icon
+  toggleBtn.textContent = isDark ? '☀️' : '🌙';
+  
+  // Save preference
+  localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+}
+
+// Load dark mode preference
+function loadDarkModePreference() {
+  const darkMode = localStorage.getItem('darkMode') === 'true';
+  if (darkMode) {
+    document.documentElement.classList.add('dark-mode');
+    const toggleBtn = document.querySelector('.dark-mode-toggle');
+    if (toggleBtn) toggleBtn.textContent = '☀️';
+  }
+}
+
+// Apply dark mode immediately if needed
+loadDarkModePreference();
+
 
 function initEditor() {
   if (!editor) {
@@ -230,39 +407,75 @@ async function login() {
       credentials: 'include'
     });
 
+    console.log('Login response status:', response.status);
+    console.log('Login response headers:', [...response.headers.entries()]);
+
     if (response.ok) {
       const userData = await response.json();
+      console.log('Login successful, user data:', userData);
+      console.log('Current cookies:', document.cookie);
+      
       document.getElementById('userDisplay').textContent = `Welcome, ${userData.name}!`;
-      document.getElementById('loginScreen').classList.add('hidden');
-      document.getElementById('app').classList.remove('hidden');
+      // Fade out login, fade in app
+      document.getElementById('loginScreen').classList.remove('show');
+      setTimeout(() => {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('app').classList.remove('hidden');
+        setTimeout(() => document.getElementById('app').classList.add('show'), 10);
+      }, 300);
       initEditor();
       await loadFiles();
     } else {
       const err = await response.json();
       showLoginError(err.error || 'Invalid token');
     }
-  } catch {
+  } catch (e) {
+    console.error('Login error:', e);
     showLoginError('Connection error. Please try again.');
   }
 }
 
 async function logout() {
-  try { await fetch(`${API_BASE}/logout`, { method: 'POST', credentials: 'include' }); } catch (_) {}
-  document.getElementById('app').classList.add('hidden');
-  document.getElementById('loginScreen').classList.remove('hidden');
-  document.getElementById('apiKey').value = '';
-  currentFile = null;
+  try { 
+    await fetch(`${API_BASE}/logout`, { 
+      method: 'POST', 
+      credentials: 'include' 
+    }); 
+  } catch (_) {}
+  
+  // Fade out app
+  document.getElementById('app').classList.remove('show');
+  
+  setTimeout(() => {
+    document.getElementById('app').classList.add('hidden');
+    document.getElementById('loginScreen').classList.remove('hidden');
+    document.getElementById('apiKey').value = '';
+    currentFile = null;
+    
+    // Fade in login screen
+    setTimeout(() => document.getElementById('loginScreen').classList.add('show'), 10);
+  }, 300);
 }
 
 async function loadFiles() {
   try {
-    const response = await fetch(`${API_BASE}/files`, { credentials: 'include' });
-    if (response.ok) displayFiles((await response.json()).files);
-    else showMessage('Failed to load files', 'error');
-  } catch {
+    const response = await fetch(`${API_BASE}/files?ts=${Date.now()}`, {
+      credentials: 'include',
+      cache: 'no-store'
+    });
+
+    if (!response.ok) return showMessage('Failed to load files', 'error');
+
+    const data = await response.json();
+    console.log('Loaded files:', data.files);
+
+    displayFiles(data.files);
+  } catch (e) {
+    console.error(e);
     showMessage('Error loading files', 'error');
   }
 }
+
 
 function displayFiles(files) {
   const container = document.getElementById('fileListContainer');
@@ -389,19 +602,54 @@ function showMessage(message, type) {
   setTimeout(() => div.remove(), 3000);
 }
 
-window.addEventListener('DOMContentLoaded', async () => {
+// Check for existing session on page load
+async function checkSession() {
+  console.log('Page loaded, checking for existing session...');
+  console.log('Current cookies:', document.cookie);
+  console.log('API_BASE:', API_BASE);
+  
   try {
-    const response = await fetch(`${API_BASE}/whoami`, { credentials: 'include' });
+    const url = `${API_BASE}/whoami`;
+    console.log('Fetching:', url);
+    
+    const response = await fetch(url, { 
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+      }
+    });
+    
+    console.log('Whoami response status:', response.status);
+    console.log('Whoami response ok:', response.ok);
+    
     if (response.ok) {
       const userData = await response.json();
+      console.log('Session valid! User data:', userData);
       document.getElementById('userDisplay').textContent = `Welcome, ${userData.name}!`;
       document.getElementById('loginScreen').classList.add('hidden');
       document.getElementById('app').classList.remove('hidden');
+      // Fade in the app
+      setTimeout(() => document.getElementById('app').classList.add('show'), 10);
       initEditor();
       await loadFiles();
+      console.log('Successfully loaded app with existing session');
+    } else {
+      const errorText = await response.text();
+      console.log('No valid session found. Status:', response.status, 'Response:', errorText);
+      console.log('Showing login screen');
+      // Fade in the login screen
+      setTimeout(() => document.getElementById('loginScreen').classList.add('show'), 10);
     }
-  } catch {}
-});
+  } catch (e) {
+    console.error('Error checking session:', e);
+    console.log('Showing login screen due to error');
+    // Fade in the login screen
+    setTimeout(() => document.getElementById('loginScreen').classList.add('show'), 10);
+  }
+}
+
+// Call immediately when script loads
+checkSession();
 </script>
 
 </body>

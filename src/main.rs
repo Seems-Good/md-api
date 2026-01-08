@@ -88,8 +88,33 @@ async fn login(Json(payload): Json<auth::LoginRequest>) -> Response {
     // Success branch
     if auth::verify_token(&payload.username, &payload.token) {
         let session_id = auth::create_session(&payload.username).await;
-        let cookie_val = format!("session_id={}; HttpOnly; Path=/; SameSite=Strict", session_id);
-
+        
+        // Determine if we're in production (HTTPS) or development (HTTP)
+        let is_production = std::env::var("PRODUCTION")
+            .unwrap_or_else(|_| "false".to_string())
+            .parse::<bool>()
+            .unwrap_or(false);
+        
+        // 30 days in seconds
+        let max_age = 60 * 60 * 24 * 30;
+        
+        // Build cookie with appropriate settings
+        let cookie_val = if is_production {
+            // Production: Secure, with Domain, 30 days
+            format!(
+                "session_id={}; HttpOnly; Secure; Path=/; Domain=admin.seemsgood.org; SameSite=Lax; Max-Age={}",
+                session_id,
+                max_age
+            )
+        } else {
+            // Development: No Secure flag, no Domain, 30 days
+            format!(
+                "session_id={}; HttpOnly; Path=/; SameSite=Lax; Max-Age={}",
+                session_id,
+                max_age
+            )
+        };
+        
         let mut headers = HeaderMap::new();
         headers.insert("Set-Cookie", HeaderValue::from_str(&cookie_val).unwrap());
 
@@ -109,7 +134,13 @@ async fn login(Json(payload): Json<auth::LoginRequest>) -> Response {
 async fn logout(user: auth::AuthUser) -> impl IntoResponse {
     let mut sessions = auth::SESSIONS.write().await;
     sessions.retain(|_, u| u != &user.username); // remove all sessions for this user
-    (axum::http::StatusCode::OK, "Logged out").into_response()
+    
+    // Clear the cookie by setting Max-Age=0
+    let mut headers = HeaderMap::new();
+    let cookie_val = "session_id=; HttpOnly; Path=/; Max-Age=0";
+    headers.insert("Set-Cookie", HeaderValue::from_str(cookie_val).unwrap());
+    
+    (StatusCode::OK, headers, "Logged out").into_response()
 }
 
 

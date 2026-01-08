@@ -4,6 +4,7 @@ default:
 
 alias b := build
 alias r := backend
+alias run := backend
 
 # build with cargo 
 build:
@@ -31,3 +32,17 @@ pi: cross
 # packege both binaries into a tarball
 pkg: release
   tar czvf pkg.tar users.json .env -C target/release add_user r2-storage-api 
+
+# docker commands
+# build app (depends on updated pkg.tar)
+compose-build: pkg
+  docker compose build --no-cache
+
+# run build no cache before.
+compose-run: compose-build
+  docker compose up -d
+
+clean:
+  docker compose stop && docker compose rm -f && rm -f pkg.tar
+
+rebuild: clean compose-run
