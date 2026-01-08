@@ -1,0 +1,14 @@
+{
+  "shodo": {
+    "name": "shodo",
+    "token_hash": "$2b$12$DB1v4LqJ1Gi1mgEGhoYRU.d140lVTi2Rr6En7/V5rtHekkJdSjksq"
+  },
+  "pip": {
+    "name": "pip",
+    "token_hash": "$2b$12$v5MNyA6eHpnLyqgYn4oLXuqqJ/5K.AeZrFXLHjlBV5sOz2lX2akQC"
+  },
+  "delulu": {
+    "name": "delulu",
+    "token_hash": "$2b$12$Lt4whIxPN6sIs3b1PcBdIOA8vAQgwjiuynYkNJDxjVLdUdAK1tvD6"
+  }
+}
