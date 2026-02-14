@@ -409,6 +409,14 @@ function getHTML() {
       display: flex;
       flex-direction: column;
       background: var(--bg-primary);
+      min-height: 0;
+    }
+    
+    #editor-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
     
     .editor-toolbar {
@@ -418,6 +426,7 @@ function getHTML() {
       display: flex;
       align-items: center;
       gap: 12px;
+      flex-shrink: 0;
     }
     
     #filename {
@@ -446,15 +455,21 @@ function getHTML() {
     #editor {
       flex: 1;
       padding: 0;
+      min-height: 0;
+      overflow: hidden;
+      position: relative;
     }
     
     /* EasyMDE Dark Mode Customization */
     .EasyMDEContainer {
       height: 100%;
+      max-height: 100%;
+      overflow: hidden;
     }
     
     .EasyMDEContainer .CodeMirror {
       height: 100% !important;
+      max-height: 100%;
       background: var(--bg-primary);
       color: var(--text-primary);
       border: none;
@@ -462,10 +477,13 @@ function getHTML() {
       line-height: 1.6;
       padding: 24px 24px 24px 48px;
       transition: background 0.2s, color 0.2s;
+      overflow: auto !important;
     }
     
     .EasyMDEContainer .CodeMirror-scroll {
       padding-left: 0;
+      overflow-y: scroll !important;
+      max-height: 100%;
     }
     
     .EasyMDEContainer .CodeMirror-lines {
@@ -636,7 +654,7 @@ function getHTML() {
           <div class="empty-state-icon">📄</div>
           <p>Create a new file to get started</p>
         </div>
-        <div id="editor-section" style="display: none; flex: 1; flex-direction: column;">
+        <div id="editor-section" style="display: none;">
           <div class="editor-toolbar">
             <input id="filename" placeholder="untitled.md">
             <div class="toolbar-actions">
@@ -778,7 +796,9 @@ function getHTML() {
         element: textarea,
         spellChecker: false,
         autosave: { enabled: false },
-        status: ['lines', 'words', 'cursor']
+        status: ['lines', 'words', 'cursor'],
+        maxHeight: '100%',
+        minHeight: '400px'
       });
       loadFiles();
     }
