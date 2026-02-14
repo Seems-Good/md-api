@@ -1,0 +1,17 @@
+{
+  "name": "markdown-editor-cloudflare",
+  "version": "1.0.0",
+  "description": "markdown editor with Cloudflare Workers and R2 storage",
+  "main": "worker.js",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "generate-password-hash": "node generate-hash.js"
+  },
+  "keywords": ["markdown", "cloudflare", "workers", "r2", "editor"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}
