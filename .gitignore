@@ -1,4 +1,2 @@
 .env
-users.json
-/target
-/src/target
+dev_wrangler.toml

@@ -1,6 +1,9 @@
 name = "markdown-editor"
 main = "worker.js"
 compatibility_date = "2026-01-20"
+workers_dev = true
+preview_urls = true
+
 
 # auto generated from cloudflare dashboard
 [observability]
@@ -18,9 +21,6 @@ enabled = true
 persist = true
 head_sampling_rate = 1
 
-workers_dev = true
-preview_urls = true
-
 [[routes]]
 pattern = "admin.seemsgood.org"
 custom_domain = true
@@ -29,14 +29,3 @@ custom_domain = true
 [[r2_buckets]]
 binding = "MARKDOWN_BUCKET"
 bucket_name = "markdown-files"
-
-# Environment variables
-[vars]
-MASTER_PASSWORD_HASH = "bdc741e94ebe5c909990fe15118479bbd5869fc29a9d0d755282ab29954eb4eb"
-
-# Cloudflare Turnstile
-# Get your keys from: https://dash.cloudflare.com/?to=/:account/turnstile
-# For testing, use the test site key: 1x00000000000000000000AA
-# For production, create a real site key
-# TURNSTILE_SECRET_KEY = "1x0000000000000000000000000000000AA"
-TURNSTILE_SECRET_KEY = "0x4AAAAAACca24Rztw_dwyZ85-pg_pA-rMA"
